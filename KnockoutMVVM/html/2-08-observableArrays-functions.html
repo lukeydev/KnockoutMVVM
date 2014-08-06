@@ -1,0 +1,208 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Knockout: Observable Array Functions</title>
+
+	
+	<link href="../css/styles.css" rel="stylesheet" type="text/css" />
+
+	<script src="/scripts/jquery-1.7.1.js" type="text/javascript"></script>
+	<script src="/scripts/knockout-2.0.0.js" type="text/javascript"></script>
+	<script src="/js/data.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+	    $(function () {
+	        my.vm = {
+	            metadata: {
+	                pageTitle: "Knockout: Observable Array Functions",
+	                personal: {
+	                    link: "http://twitter.com/john_papa",
+	                    text: "@john_papa"
+	                }
+	            },
+	            products: ko.observableArray(["Guitars", "Capos", "Straps", "Picks"]),
+	            selectedProducts: ko.observableArray([]),
+	            itemToAdd: ko.observable(""),
+	            itemToAddViaSplice: ko.observable(""),
+	            replacementItem: ko.observable(""),
+	            itemToAddViaUnshift: ko.observable("")
+	        };
+
+	        my.vm.addItem = function () {
+	            // Prevent blanks and duplicates
+	            if ((my.vm.itemToAdd() !== "") &&
+					(my.vm.products.indexOf(my.vm.itemToAdd()) < 0)) {
+	                my.vm.products.push(my.vm.itemToAdd());
+	            }
+	            my.vm.itemToAdd("");
+	        };
+
+	        my.vm.productsExist = ko.computed(function () {
+	            return this.products().length > 0;
+	        }, my.vm);
+	        // Note: This example passes in my.vm which then is represented by "this".
+	        //              Another option is to not pass in my.vm, and instead refer directly 
+	        //              to my.vm inside the computed function.
+
+	        my.vm.productsAreSelected = ko.computed(function () {
+	            return this.selectedProducts().length > 0;
+	        }, my.vm);
+
+	        my.vm.canAddViaSplice = ko.computed(function () {
+	            return this.productsAreSelected() && this.itemToAddViaSplice();
+	        }, my.vm);
+
+	        my.vm.canReplace = ko.computed(function () {
+	            return this.productsAreSelected() && this.replacementItem();
+	        }, my.vm);
+
+	        my.vm.canAddViaUnshift = ko.computed(function () {
+	            //return this.itemToAddViaUnshift();
+	            return this.itemToAddViaUnshift().length > 0;
+	        }, my.vm);
+
+	        my.vm.sortProducts = function () {
+	            my.vm.products.sort(
+					function (left, right) {
+					    return left.toLowerCase() === right.toLowerCase()
+							? 0 : (left.toLowerCase() < right.toLowerCase() ? -1 : 1);
+					}
+					);
+	        };
+
+	        my.vm.reverseProducts = function () {
+	            my.vm.products.reverse();
+	        };
+
+	        my.vm.spliceProduct = function () {
+	            if (!my.vm.productsAreSelected()) { return; }
+	            var start = my.vm.products().indexOf(my.vm.selectedProducts()[0]);
+	            my.vm.products.splice(start, 0, my.vm.itemToAddViaSplice());
+	            my.vm.itemToAddViaSplice("");
+	        };
+
+	        my.vm.replaceProduct = function () {
+	            if (!my.vm.productsAreSelected()) { return; }
+	            my.vm.products.replace(my.vm.selectedProducts()[0], my.vm.replacementItem());
+	            my.vm.selectedProducts.push(my.vm.replacementItem());
+	            my.vm.replacementItem("");
+	        };
+
+	        my.vm.unshiftProduct = function () {
+	            my.vm.products.unshift(my.vm.itemToAddViaUnshift());
+	            my.vm.itemToAddViaUnshift("");
+	        };
+
+	        my.vm.shiftProduct = function () {
+	            var item = my.vm.products.shift();
+	        };
+
+	        my.vm.popProduct = function () {
+	            var item = my.vm.products.pop();
+	        };
+
+	        my.vm.removeSelected = function () {
+	            // NOTE: Could use remove function if we had only 1 to remove
+	            // my.vm.products.remove(my.vm.selectedProducts()[0]);
+	            my.vm.products.removeAll(my.vm.selectedProducts());
+	            my.vm.selectedProducts([]);
+	        };
+
+	        ko.applyBindings(my.vm);
+	    });
+	</script>
+</head>
+
+<body>
+	<div class="page">
+		<div class="header" data-bind="with: metadata">
+			<h1 data-bind="text: pageTitle"></h1>
+			<div data-bind="with:personal">
+				<a href="00-index.html">Index</a>
+				<a data-bind="attr: {href: link, title: text}, text: text" class="personalCss"></a>
+			</div>
+		</div>
+		<div id="main">
+			<div class="showroom">
+				<div>
+					<span data-bind="text: products().length"></span><span>Products</span>
+				</div>
+				<div >
+					<select multiple="multiple" 
+						data-bind="options:products, selectedOptions:selectedProducts">
+					</select>
+					<div>
+						<button data-bind="click: removeSelected, enable: productsAreSelected ">Remove</button>
+						<button data-bind="click: sortProducts, enable: productsExist">Sort</button>
+						<button data-bind="click: reverseProducts, enable: productsExist">Reverse</button>
+					</div>
+					<form data-bind="submit:addItem">
+						Add item via push:
+						<input type="text" data-bind='value:itemToAdd, valueUpdate: "afterkeydown"' />
+						<button type="submit" data-bind="enable: itemToAdd().length > 0">Push</button> <span>(You can also press Enter to submit)</span>
+					</form>
+					<div>
+						Add via splicing:
+						<input type="text" data-bind='value:itemToAddViaSplice, valueUpdate: "afterkeydown"' />
+						<button data-bind="click: spliceProduct, enable: canAddViaSplice">Insert before 1st selected item</button>
+					</div>
+					<div>
+						Replace an item:
+						<input type="text" data-bind='value:replacementItem, valueUpdate: "afterkeydown"' />
+						<button data-bind="click: replaceProduct, enable: canReplace">Replace 1st selected item</button>
+					</div>
+					<div>
+						Add via unshift:
+						<input type="text" data-bind='value:itemToAddViaUnshift, valueUpdate: "afterkeydown"' />
+						<button data-bind="click: unshiftProduct, enable: canAddViaUnshift">Insert at beginning of array</button>
+					</div>
+					<div>
+						Remove via shift:
+						<button data-bind="click: shiftProduct, enable: productsExist">Remove first item of array, and return it</button>
+					</div>
+					<div>
+						Remove via pop:
+						<button data-bind="click: popProduct, enable: productsExist">Remove last item of array, and return it</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="topics">
+			<span>Explores:</span>
+			<ul>
+				<li>observableArray</li>
+				<li>observable</li>
+				<li>computed</li>
+				<li>built in bindings:
+					<ul>
+						<li>click</li>
+						<li>enable</li>
+						<li>options</li>
+						<li>selectedOptions</li>
+						<li>text</li>
+						<li>value</li>
+					</ul>
+				</li>
+				<li>valueUpdate: 'afterkeydown'</li>
+				<li>object notation (products().length)</li>
+				<li>array functions:
+					<ul>
+						<li>indexOf</li>
+						<li>pop</li>
+						<li>push</li>
+						<li>remove</li>
+						<li>removeAll</li>
+						<li>replace</li>
+						<li>reverse</li>
+						<li>shift</li>
+						<li>sort</li>
+						<li>splice</li>
+						<li>unshift</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+</body>
+</html>

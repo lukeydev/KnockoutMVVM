@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Knockout: Toggle Templates with if/ifnot</title>
+    
+    <link href="../css/styles.css" rel="stylesheet" type="text/css" />
+    <script src="/scripts/jquery-1.7.1.js" type="text/javascript"></script>
+    <script src="/scripts/knockout-2.0.0.js" type="text/javascript"></script>
+    <script src="/js/data.js" type="text/javascript"></script>
+    <script src="/js/utils.js" type="text/javascript"></script>
+    <script src="/js/5-06-toggle-templates.js" type="text/javascript"></script>
+</head>
+<body>
+    <div class="page">
+        <div class="header" data-bind="with: metadata">
+            <h1 data-bind="text: pageTitle">
+            </h1>
+            <div data-bind="with:personal">
+                <a href="00-index.html">Index</a> <a data-bind="attr: {href: link, title: text}, text: text"
+                                                     class="personalCss"></a>
+            </div>
+        </div>
+        <div id="main">
+            <div class="leftFloat">
+                <div>
+                    <span class="caption">Select a Product</span>
+                </div>
+                <div>
+                </div>
+                <ul data-bind="foreach:products" class="smallList">
+                    <li data-bind="css: { selected: isSelected}" class="selectable">
+                        <div data-bind="text: shortDesc, click:$root.selectProduct">
+                        </div>
+                   </li>
+                </ul>
+            </div>
+            <div data-bind="if: selectedProduct()" class="leftFloat">
+                <div class="productDetailsArea">
+                    <div>
+                        <input type="checkbox" data-bind="checked: showDetails" /><span>Expand Details</span>
+                    </div>
+                    <div data-bind="if: !showDetails()">
+                        <div data-bind="with: selectedProduct().model">
+                            <div class="photoContainer photoThumbnail">
+                            </div>
+                            <div>
+                                <span>Brand: </span><span data-bind="text: brand" class="textValues"></span>
+                            </div>
+                            <div>
+                                <span>Model: </span><span data-bind="text: name" class="textValues"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-bind="if: showDetails()">
+                        <div data-bind="with: selectedProduct">
+                            <div class="photoContainer leftFloat">
+                                <img data-bind="visible: photoUrl, attr: { src: photoUrl, alt: shortDesc}" class="photoThumbnail"></img>
+                            </div>
+                            <div>
+                                <span>Brand: </span><span data-bind="text: model().brand" class="textValues"></span>
+                            </div>
+                            <div>
+                                <span>Model: </span><span data-bind="text: model().name" class="textValues"></span>
+                            </div>
+                            <div>
+                                <span>Price: </span><span data-bind="text: my.formatCurrency(salePrice())" class="textValues">
+                                </span>
+                            </div>
+                            <div>
+                                <span>Description:</span></div>
+                            <div>
+                                <span data-bind="text: description" class="textValues"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    </div>
+    </div>
+        <div class="topics">
+            <span>Explores:</span>
+            <ul>
+                <li>swapping templates</li>
+                <li>item selection, within an observable array</li>
+                <li>$root and $parent</li>
+                <li>foreach</li>
+                <li>with</li>
+                <li>if</li>
+                <li>ifnot</li>
+                <li>Or conditions</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

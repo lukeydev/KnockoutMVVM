@@ -1,0 +1,156 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Knockout: Observable Arrays</title>
+
+	
+	<link href="../css/styles.css" rel="stylesheet" type="text/css" />
+	<script src="/scripts/jquery-1.7.1.js" type="text/javascript"></script>
+	<script src="/scripts/knockout-2.0.0.js" type="text/javascript"></script>
+	<script src="/js/data.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+	    $(function () {
+	        var photoPath = "/images/";
+
+	        // Product construction
+	        var Product = function () {
+	            this.id = ko.observable();
+	            this.salePrice = ko.observable();
+	            this.photo = ko.observable();
+	            this.itemNumber = ko.observable();
+	            this.description = ko.observable();
+	            this.photoUrl = ko.computed(function () {
+	                return photoPath + this.photo();
+	            }, this);
+	        };
+
+	        my.vm = {
+	            metadata: {
+	                pageTitle: "Knockout: Observable Arrays",
+	                personal: {
+	                    link: "http://twitter.com/john_papa",
+	                    text: "@john_papa"
+	                }
+	            },
+
+	            // observable array of products
+	            products: ko.observableArray([]),
+	            selectedProducts: ko.observableArray([]),
+	            itemToAdd: ko.observable(""),
+
+	            // loading the observable array with sample data
+	            load: function () {
+	                $.each(my.sampleData.data.Products, function (i, p) {
+	                    my.vm.products.push(new Product()
+    	                        .id(p.Id)
+    	                        .salePrice(p.SalePrice)
+    	                        .photo(p.Photo)
+    	                        .itemNumber(p.ItemNumber)
+    	                        .description(p.Description)
+	                    );
+	                });
+	            }
+	        };
+
+
+
+
+	        /////////////////////////////////////
+	        // Add an item code
+	        my.vm.addItem = function () {
+	            // Prevent blanks
+	            if (my.vm.itemToAdd() !== "") {
+	                my.vm.products.push(
+	                    new Product().
+    	                    description(my.vm.itemToAdd()));
+	            }
+	            my.vm.itemToAdd("");
+	        };
+	        /////////////////////////////////////
+
+
+	        /////////////////////////////////////
+	        // Removal code
+	        my.vm.productsAreSelected = ko.computed(function () {
+	            return my.vm.selectedProducts().length > 0;
+	        }); //, my.vm);
+
+	        my.vm.removeSelected = function () {
+	            my.vm.products.removeAll(my.vm.selectedProducts());
+	            my.vm.selectedProducts([]);
+	        };
+
+
+	        /////////////////////////////////////
+
+	        /////////////////////////////////////
+	        // Sorting code
+	        my.vm.productsExist = ko.computed(function () {
+	            return my.vm.products().length > 0;
+	        });
+
+	        my.vm.sortProducts = function () {
+	            my.vm.products.sort(
+	                function (left, right) {
+	                    return left.description().toLowerCase() === right.description().toLowerCase()
+	                        ? 0 : (left.description().toLowerCase() < right.description().toLowerCase() ? -1 : 1);
+	                }
+                    );
+	            };
+	        /////////////////////////////////////
+
+	        my.vm.load();
+	        ko.applyBindings(my.vm);
+	    });
+    </script>
+</head>
+
+<body>
+	<div class="page">
+		<div class="header" data-bind="with: metadata">
+			<h1 data-bind="text: pageTitle"></h1>
+			<div data-bind="with:personal">
+				<a href="00-index.html">Index</a>
+				<a data-bind="attr: {href: link, title: text}, text: text" class="personalCss"></a>
+			</div>
+		</div>
+		<div id="main">
+			<div class="showroom">
+                <div>
+                    <span data-bind="text:products().length"></span><span>Products</span>
+                </div>
+                <div >
+                    <select class="productsSelect" multiple="multiple" 
+                        data-bind="options:products, selectedOptions:selectedProducts, optionsText:'description'">
+                    </select>
+
+                    <div>
+                        <button data-bind="click: removeSelected, enable: productsAreSelected" >Remove</button>
+                        <button data-bind="click: sortProducts, enable: productsExist">Sort</button>
+                    </div>
+                    <form data-bind="submit: addItem">
+                        Add item:
+                        <input type="text" data-bind="value:itemToAdd, valueUpdate:'afterkeydown'" />
+                        <button type="submit" data-bind="enable: itemToAdd().length > 0">Add</button>
+                    </form>
+
+                </div>
+            </div>
+		</div>
+        <div class="topics">
+            <span>Explores:</span>
+            <ul>
+                <li>observableArray</li>
+                <li>observable</li>
+                <li>computed</li>
+                <li>click</li>
+                <li>object notation (products().length)</li>
+                <li>attr</li>
+                <li>with</li>
+            </ul>
+        </div>
+	</div>
+</body>
+</html>

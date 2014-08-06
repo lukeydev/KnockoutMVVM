@@ -1,0 +1,24 @@
+﻿<div>
+    <div class="dialogTitleBorder">
+        <span class="borderTitleText">Product Details</span>
+    </div>
+    <div class="photoContainer leftFloat">
+        <img data-bind="visible: photoUrl, attr: { src: photoUrl, alt: shortDesc}" class="photoThumbnail"></img>
+    </div>
+    <div class="leftFloat">
+        <div>
+            <span>Brand: </span><span data-bind="text: model().brand" class="textValues"></span>
+        </div>
+        <div>
+            <span>Model: </span><span data-bind="text: model().name" class="textValues"></span>
+        </div>
+        <div>
+            <span>Price: </span><span data-bind="text: my.formatCurrency(salePrice())" class="textValues">
+            </span>
+        </div>
+        <div>
+            <span data-bind="starRating: rating"></span>
+        </div>
+    </div>
+    <button data-bind="jqButton: { }, click: $root.addToCart">Add</button>
+</div>

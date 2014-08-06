@@ -1,0 +1,149 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Knockout: Built-In Bindings</title>
+
+	
+	<link href="../css/styles.css" rel="stylesheet" type="text/css" />
+
+	<script src="/scripts/jquery-1.7.1.js" type="text/javascript"></script>
+	<script src="/scripts/knockout-2.0.0.js" type="text/javascript"></script>
+	<script src="/js/data.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+		$(function () {
+			my.viewmodel = {
+				metadata: {
+					pageTitle: "Knockout: Built-In Bindings (checkboxes and radio buttons)",
+					personal: {
+						link: "http://twitter.com/john_papa",
+						text: "@john_papa"
+					}
+                },
+			    // text/html
+				id: ko.observable("123"),
+				model: {
+					code: ko.observable("314ce"),
+					name: ko.observable("Taylor 314 ce")
+	            },
+			    
+                // value & valueUpdate				
+				salePrice: ko.observable(1995),
+                
+				// checkboxes and radio buttons
+				isInStock: ko.observable(true),
+				selectedColorForRadio: ko.observable(),
+				colors: [{ key: "BR", name: "Brown" },
+				        { key: "BL", name: "Blue" },
+				        {key:"BK", name:"Black"}]
+
+			};
+			ko.applyBindings(my.viewmodel);
+		});
+	</script>
+</head>
+
+<body>
+	<div class="page">
+		<div class="header" data-bind="with: metadata">
+			<h1 data-bind="text: pageTitle"></h1>
+			<div data-bind="with:personal">
+				<a href="00-index.html">Index</a>
+				<a data-bind="attr: {href: link, title: text}, text: text" class="personalCss"></a>
+			</div>
+		</div>
+		<div id="main">
+			<div class="controlsPanel">
+			<table>
+				<thead>
+					<tr>
+						<td>Bindings</td>
+						<td>Target Value</td>
+						<td>Source Value(s)</td>
+					</tr>
+				</thead>
+				<!--Basics-->
+
+                <!--Text, Html-->
+
+				<tr>
+					<td>
+						<div class="caption">text</div>
+					</td>
+					<td><span data-bind="text: model.code"></span></td>
+					<td><span data-bind="text: model.code"></span></td>
+				</tr>
+
+
+				<!--Input bindings and form fields-->
+
+                <!--Value, valueUpdate-->
+				<tr>
+					<td>
+						<div class="caption">value</div>
+						<div class="notes">text input</div>
+					</td>
+					<td><input type="text" data-bind="value: model.code"/></td>
+					<td><span>model.code: </span><span data-bind="text: model.code"></span></td>
+				</tr>
+
+                <!--Checked (checkboxes and radio buttons)-->
+				<tr>
+					<td>
+						<div class="caption">checked</div>
+						<div class="notes"></div>
+					</td>
+					<td><input type="checkbox" data-bind="checked: isInStock"/></td>
+					<td><span>isInStock: </span><span data-bind="text: isInStock"></span></td>
+				</tr>
+
+			    <tr>
+					<td>
+						<div class="caption">checked and value</div>
+						<div class="notes">radio buttons</div>
+					</td>
+			        <td>
+			            <input type="radio" value="BR" data-bind="checked: selectedColorForRadio"/><span>brown</span>
+			            <input type="radio" value="BL"data-bind="checked: selectedColorForRadio"/><span>blue</span>
+			            <input type="radio" value="BK"data-bind="checked: selectedColorForRadio"/><span>black</span>
+			        </td>
+					<td><span>selectedColorForRadio: </span><span data-bind="text: selectedColorForRadio"></span></td>
+				</tr>
+
+			    <tr>
+					<td>
+						<div class="caption">checked and value</div>
+						<div class="notes">radio buttons (foreach)</div>
+					</td>
+			        <td>
+			            <div data-bind="foreach: colors">
+			                <input type="radio" 
+                            data-bind="value: key,checked: $parent.selectedColorForRadio"/><span data-bind="text:name"></span>
+                        </div>
+			        </td>
+					<td><span>selectedColorForRadio: </span><span data-bind="text: selectedColorForRadio"></span></td>
+				</tr>
+
+
+
+			</table>
+			</div>
+		</div>
+		<div class="topics">
+			<span>Explores:</span>
+			<ul>
+				<li>built in bindings:
+					<ul>
+						<li>text</li>
+						<li>value</li>
+						<li>checked</li>
+					</ul>
+				</li>
+				<li>observable</li>
+				<li>foreach</li>
+			</ul>
+		</div>
+	</div>
+</body>
+</html>

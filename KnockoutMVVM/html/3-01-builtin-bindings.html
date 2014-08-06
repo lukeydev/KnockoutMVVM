@@ -1,0 +1,345 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Knockout: Built-In Bindings</title>
+
+	
+	<link href="../css/styles.css" rel="stylesheet" type="text/css" />
+
+	<script src="/scripts/jquery-1.7.1.js" type="text/javascript"></script>
+	<script src="/scripts/knockout-2.0.0.js" type="text/javascript"></script>
+	<script src="/js/data.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+		$(function () {
+			my.viewmodel = {
+				metadata: {
+					pageTitle: "Knockout: Built-In Bindings",
+					personal: {
+						link: "http://twitter.com/john_papa",
+						text: "@john_papa"
+					}
+				},
+				id: ko.observable("123"),
+				salePrice: ko.observable(1995),
+				profit: ko.observable(-7250),
+				rating: ko.observable(4),
+				isInStock: ko.observable(true),
+				model: {
+					code: ko.observable("314ce"),
+					name: ko.observable("Taylor 314 ce")
+				},
+				colors: ko.observableArray([
+					{ key: "BR", name: "brown" },
+					{ key: "BU", name: "blue" },
+					{ key: "BK", name: "black"}]),
+				selectedColor: ko.observable(""),
+				selectedColorsForDropdown: ko.observableArray([]),
+				selectedColorForRadio: ko.observableArray(),
+				allowEditing: ko.observable(true),
+				isReadonly: ko.observable(true),
+				onSalesFloor: ko.observable(true),
+				qty: ko.observable(7),
+				photoUrl: ko.observable("/images/314ce.png"),
+				url: ko.observable("http://johnpapa.net"),
+				details: ko.observable("<strong><em>This guitar rocks!</em></strong>"),
+				checkboxHasFocus: ko.observable(false),
+				textboxHasFocus: ko.observable(false),
+				buttonHasFocus: ko.observable(false),
+				userInput: ko.observable(""),
+				setFocusToCheckbox: function () {
+					this.checkboxHasFocus(true);
+				},
+				displayValue: function () {
+					if (this.userInput().length > 0) {
+						window.alert("You entered: " + this.userInput());
+					}
+				},
+				detailsAreVisible: ko.observable(false),
+				showDetails: function () {
+					this.detailsAreVisible(true);
+				},
+				hideDetails: function () {
+					this.detailsAreVisible(false);
+				},
+				useUniqueName: ko.observable(true)
+			};
+			ko.applyBindings(my.viewmodel);
+		});
+	</script>
+</head>
+
+<body>
+	<div class="page">
+		<div class="header" data-bind="with: metadata">
+			<h1 data-bind="text: pageTitle"></h1>
+			<div data-bind="with:personal">
+				<a href="00-index.html">Index</a>
+				<a data-bind="attr: {href: link, title: text}, text: text" class="personalCss"></a>
+			</div>
+		</div>
+		<div id="main">
+			<div class="controlsPanel">
+			<table>
+				<thead>
+					<tr>
+						<td>Bindings</td>
+						<td>Target Value</td>
+						<td>Source Value(s)</td>
+					</tr>
+				</thead>
+				<!--Basics-->
+				<tr>
+					<td>
+						<div class="caption">text</div>
+					</td>
+					<td><span data-bind="text: model.code"></span></td>
+					<td><span data-bind="text: model.code"></span></td>
+				</tr>
+				<tr>
+					<td>
+						<div class="caption">
+							html</div>
+					</td>
+					<td>
+						<div data-bind="html: details">
+						</div>
+					</td>
+					<td>
+						<span>details: </span><span data-bind="text: details"></span>
+					</td>
+				</tr>
+				<!--Input bindings and form fields-->
+				<tr>
+					<td>
+						<div class="caption">value</div>
+						<div class="notes">text input</div>
+					</td>
+					<td><input type="text" data-bind="value: model.code"/></td>
+					<td><span>model.code: </span><span data-bind="text: model.code"></span></td>
+				</tr>
+				<tr>
+					<td>
+						<div class="caption">value</div>
+						<div class="notes">text input with change on each keystroke</div>
+					</td>
+					<td><input type="text" data-bind="value: salePrice, valueUpdate: 'afterkeydown'"/></td>
+					<td><span>salePrice: </span><span data-bind="text: salePrice"></span></td>
+				</tr>
+				<tr>
+					<td>
+						<div class="caption">checked</div>
+						<div class="notes">checkbox</div>
+					</td>
+					<td><input type="checkbox" data-bind="checked: isInStock"/></td>
+					<td><span>isInStock: </span><span data-bind="text: isInStock"></span></td>
+				</tr>
+				<tr>
+					<td>
+						<div class="caption">checked and value</div>
+						<div class="notes">radio buttons</div>
+					</td>
+					<td>
+						<input type="radio" value="BR" data-bind="checked: selectedColorForRadio" /><span>brown</span>
+						<input type="radio" value="BU" data-bind="checked: selectedColorForRadio" /><span>blue</span>
+						<input type="radio" value="BK" data-bind="checked: selectedColorForRadio" /><span>black</span>
+					</td>
+					<td><span>selectedColorForRadio: </span><span data-bind="text: selectedColorForRadio"></span></td>
+				</tr>
+				<tr>
+					<td>
+						<div class="caption">checked and value</div>
+						<div class="notes">radio buttons (with foreach)</div>
+					</td>
+					<td>
+						<div data-bind="foreach: colors">
+							<input type="radio" data-bind="value:key, checked: $parent.selectedColorForRadio" /><span data-bind="text: name"></span>
+						</div>
+					</td>
+					<td><span>selectedColorForRadio: </span><span data-bind="text: selectedColorForRadio"></span></td>
+				</tr>
+				<tr>
+				<td>
+					<div class="caption">options, value, optionsText, optionsValue</div>
+					<div class="notes">select (single selection dropdowns)</div>
+				</td>
+				<td><select data-bind="options: colors, value: selectedColor, optionsText: 'name', optionsValue: 'key'" ></select></td>
+				<td><span>selectedColor: </span><span data-bind="text: selectedColor"></span></td>
+				</tr>
+				<tr>
+					<td>
+						<div class="caption">options, selectedOptions, optionsText, optionsValue</div>
+						<div class="notes">select (multiple selection dropdowns)</div>
+					</td>
+					<td><select data-bind="options: colors, selectedOptions: selectedColorsForDropdown, optionsText: 'name', optionsValue: 'key'" multiple="multiple" ></select></td>
+					<td><span>selectedColorsForDropDown: </span><span data-bind="text: selectedColorsForDropdown"></span></td>
+				</tr>
+				<tr>
+					<td>
+						<div class="caption">enable</div>
+					</td>
+					<td>
+						<input type="checkbox" data-bind="checked: allowEditing"/>
+						<input type="text" data-bind="enable: allowEditing, value:salePrice" />
+					</td>
+					<td><span>allowEditing: </span><span data-bind="text: allowEditing"></span></td>
+				</tr>
+				<tr>
+					<td>
+						<div class="caption">disable</div>
+					</td>
+					<td>
+						<input type="checkbox" data-bind="checked: isReadonly"/>
+						<input type="text" data-bind="disable: isReadonly, value:salePrice" />
+					</td>
+					<td><span>is readonly: </span><span data-bind="text: isReadonly"></span></td>
+				</tr>
+				<tr>
+					<td>
+						<div class="caption">hasfocus</div>
+					</td>
+					<td>
+						<input type="checkbox" data-bind="hasfocus: checkboxHasFocus"/>
+						<input type="text" data-bind="hasfocus: textboxHasFocus"/>
+						<button data-bind="click: setFocusToCheckbox, hasfocus:buttonHasFocus">set focus to checkbox</button>
+						<br/>
+						<span data-bind="visible: checkboxHasFocus">checkbox has focus</span>
+						<span data-bind="visible: textboxHasFocus">textbox has focus</span>
+						<span data-bind="visible: buttonHasFocus">button has focus</span>
+					</td>
+					<td>
+						<span>checkboxHasFocus: </span><span data-bind="text: checkboxHasFocus">checkbox has focus</span>
+						<br/>
+						<span>textboxHasFocus: </span><span data-bind="text: textboxHasFocus">textbox has focus</span>
+						<br/>
+						<span>buttonHasFocus: </span><span data-bind="text: buttonHasFocus">button has focus</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="caption">uniqueName</div>
+					</td>
+					<td>
+						<input type="text" data-bind="value:salePrice, uniqueName: useUniqueName" />
+					</td>
+					<td>
+						<span>use unique name: </span><span data-bind="text: useUniqueName"></span>
+					</td>
+				</tr>
+				<!--Form and event based bindings-->
+				<tr>
+					<td>
+						<div class="caption">click</div>
+					</td>
+					<td>
+						<input type="text" data-bind="value: userInput"/>
+						<button data-bind="click: displayValue">display value</button>
+					</td>
+					<td>
+						<span>userInput: </span><span data-bind="text: userInput"></span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="caption">event</div>
+					</td>
+					<td>
+						<div data-bind="text:model.code, event: {mouseover: showDetails, mouseout: hideDetails}"></div>
+						<div data-bind="visible: detailsAreVisible" style="background-color: yellow">
+							<div data-bind="text:model.name"></div>
+							<div data-bind="text:salePrice"></div>
+						</div>
+					</td>
+					<td>
+						<span>detailsAreVisible: </span><span data-bind="text: detailsAreVisible"></span>
+					</td>
+				</tr>
+				<!--Appearance-->
+				<tr>
+					<td>
+						<div class="caption">visible</div>
+					</td>
+					<td>
+						<input type="checkbox" data-bind="checked: onSalesFloor"/>
+						<input type="text" data-bind="visible: onSalesFloor, value:qty" />
+					</td>
+					<td>
+						<span>onSalesFloor: </span><span data-bind="text: onSalesFloor"></span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="caption">css</div>
+					</td>
+					<td>
+						<input data-bind="value:profit, css: {negative: profit() < 0, positive: !(profit() < 0), }"/>
+					</td>
+					<td><span>profit < 0: </span><span data-bind="text: profit() < 0 ? 'negative' : 'positive'"></span></td>
+				</tr>
+				<tr>
+					<td>
+						<div class="caption">style</div>
+					</td>
+					<td>
+						<input data-bind="value:profit, style: {color: profit() < 0 ? 'red' : 'green'}"></input>
+					</td>
+					<td><span>profit < 0: </span><span data-bind="text: profit() < 0 ? 'red' : 'green'"></span></td>
+				</tr>
+				<tr>
+					<td>
+						<div class="caption">attr</div>
+						<div class="notes">a</div>
+					</td>
+					<td>
+						<a data-bind="attr: {href: url, title: model.name}, text:model.code"></a>
+					</td>
+					<td><span>url: </span><span data-bind="text: url"></span></td>
+				</tr>
+				<tr>
+					<td>
+						<div class="caption">attr</div>
+						<div class="notes">img</div>
+					</td>
+					<td>
+						<img data-bind="attr: {src: photoUrl, alt: model.code}" class="photoThumbnail"/>
+					</td>
+					<td><span>photoUrl: </span><span data-bind="text: photoUrl"></span></td>
+				</tr>
+			</table>
+			</div>
+		</div>
+		<div class="topics">
+			<span>Explores:</span>
+			<ul>
+				<li>built in bindings:
+					<ul>
+						<li>text</li>
+						<li>html</li>
+						<li>value</li>
+						<li>valueUpdate: 'afterkeydown'</li>
+						<li>checked</li>
+						<li>options</li>
+						<li>optionsText</li>
+						<li>optionsValue</li>
+						<li>selectedOptions</li>
+						<li>enable</li>
+						<li>disable</li>
+						<li>hasFocus</li>
+						<li>uniqueName</li>
+						<li>click</li>
+						<li>event</li>
+						<li>visible</li>
+						<li>css</li>
+						<li>style</li>
+						<li>attr</li>
+					</ul>
+				</li>
+				<li>observable</li>
+				<li>observableArray</li>
+				<li>foreach</li>
+			</ul>
+		</div>
+	</div>
+</body>
+</html>

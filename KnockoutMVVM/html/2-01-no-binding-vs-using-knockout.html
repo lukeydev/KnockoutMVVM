@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Knockout: No Binding vs Using Knockout</title>
+	
+	<link href="../css/styles.css" rel="stylesheet" type="text/css" />
+	<script src="/scripts/jquery-1.7.1.js" type="text/javascript"></script>
+	<script src="/scripts/knockout-2.0.0.js" type="text/javascript"></script>
+</head>
+
+<body>
+    <script type="text/javascript">
+        $(function () {
+            // Note: 
+            // it is likely that you would get your object from some 
+            // web service, but we'll mock it for simplicity.
+            var product = {
+                id: 1001,
+                itemNumber: "T314CE",
+                model: "Taylor 314ce",
+                salePrice: 1199.95
+            };
+
+            //Note: Manually push values from the source to the targets
+            // We'll use jQuery for simplicity, but its not required
+            $("#guitarItemNumber").text(product.itemNumber);
+            $("#guitarModel").val(product.model);
+            $("#guitarSalesPrice").val(product.salePrice);
+
+            //Note: Data bind the values between the source and the targets using Knockout
+            ko.applyBindings(product);
+        });
+    </script>
+    <div class="page">
+        <h1>No Binding vs Using Knockout</h1>
+        <div class="header">
+            <a href="00-index.html">Index</a> <a href="http://twitter.com/john_papa" class="personalCss">
+                @john_papa</a>
+        </div>
+        <div>
+            <h2>
+                Without Knockout</h2>
+            <span>Item number:</span><span id="guitarItemNumber"></span>
+            <br />
+            <span>Guitar model:</span><input id="guitarModel" />
+            <span>Sales price:</span><input id="guitarSalesPrice" />
+        </div>
+        <div>
+            <h2>
+                With Knockout (but no observables)</h2>
+            <span>Item number</span><span data-bind="text: itemNumber"></span>
+            <br />
+            <span>Guitar model:</span><input data-bind="value: model" />
+            <span>Sales price:</span><input data-bind="value: salePrice" />
+        </div>
+        <div class="topics">
+            <span>Explores:</span>
+            <ul>
+                <li>no binding. uses jQuery to push/pull</li>
+                <li>binding with Knockout, sans observables</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

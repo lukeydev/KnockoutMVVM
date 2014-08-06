@@ -1,0 +1,217 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	
+	<link href="../css/styles.css" rel="stylesheet" type="text/css" />
+
+	<script src="/scripts/jquery-1.7.1.js" type="text/javascript"></script>
+	<script src="/scripts/knockout-2.0.0.js" type="text/javascript"></script>
+	<script src="/js/data.js" type="text/javascript"></script>
+	<script src="/js/utils.js" type="text/javascript"></script>
+
+	<script type="text/javascript" >
+	    $(function () {
+	        var my = {};
+
+	        // The "Models"
+
+	        // The Product function creates new Product Models.
+	        // In this case, we use a function to create the Car Model to make 
+	        // it easier to extend with a computed member. The properties are 
+	        // observables, but they only need to be if they should notify their changes.
+	        my.Car = function () {
+	            var self = this;
+	            self.key = ko.observable();
+	            self.color = ko.observable();
+	            self.year = ko.observable();
+	            self.modelKey = ko.observable();
+	            self.desc = ko.computed(function () {
+	                return self.year() + " " + self.color();
+	            }, self);
+	        };
+
+	        // Set up the Models.
+	        // We use object literals here to show another way to create Models.
+	        // Properties are not observable in this case. Depends if you want 
+	        // them to notify of changes.
+	        my.data = (function () {
+	            var 
+			        allMakes = ko.observableArray([
+					        { name: "Lexus", key: "L" },
+					        { name: "BMW", key: "B"}]),
+			        allModels = ko.observableArray([
+					        { name: "ISF", makeKey: "L", key: "1" },
+					        { name: "IS350", makeKey: "L", key: "2" },
+					        { name: "ES350", makeKey: "L", key: "3" },
+					        { name: "Z3", makeKey: "B", key: "4" },
+					        { name: "i335", makeKey: "B", key: "5" },
+					        { name: "i735", makeKey: "B", key: "6"}]),
+			        allCars = ko.observableArray([
+					        new my.Car().key("ASD928K1").color("red").year(2008).modelKey("1"),
+					        new my.Car().key("KJAS90U2").color("red").year(2011).modelKey("1"),
+					        new my.Car().key("J89J1233").color("black").year(2009).modelKey("1"),
+					        new my.Car().key("Y8M34N9").color("blue").year(2008).modelKey("1"),
+					        new my.Car().key("ASD3DFG2").color("yellow").year(2008).modelKey("2"),
+					        new my.Car().key("ASDF23RF").color("red").year(2007).modelKey("2"),
+					        new my.Car().key("SGS4SDG4").color("white").year(2009).modelKey("3"),
+					        new my.Car().key("KJD347D3").color("blue").year(2010).modelKey("3"),
+					        new my.Car().key("D9F8R7E7").color("yellow").year(2012).modelKey("4"),
+					        new my.Car().key("K3K4L6S9").color("red").year(2009).modelKey("4"),
+					        new my.Car().key("W1M3L4K2").color("black").year(2007).modelKey("5"),
+					        new my.Car().key("UU33KK22").color("blue").year(2004).modelKey("5"),
+					        new my.Car().key("ASD098K2").color("purple").year(2008).modelKey("6"),
+					        new my.Car().key("LKJ123H4").color("red").year(2011).modelKey("6")
+				        ]);
+	            return {
+	                allMakes: allMakes,
+	                allModels: allModels,
+	                allCars: allCars
+	            };
+	        } ());
+
+	        // The ViewModel
+	        my.viewmodel = (function () {
+	            var 
+                    metadata = {
+                        pageTitle: "Knockout: Subscribing to Change Notifications",
+                        personal: {
+                            link: "http://twitter.com/john_papa",
+                            text: "@john_papa"
+                        }
+                    },
+			        makes = my.data.allMakes, // Lexus, Toyota, etc.
+			        selectedMake = ko.observable(""),
+			        selectedModel = ko.observable(""),
+			        selectedCar = ko.observable(""),
+	            // Get the list of Models for the selected Make
+			        models = ko.computed(function () {
+			            if (!selectedMake()) {
+			                return null;
+			            }
+			            var filter = selectedMake().key.toLowerCase();
+			            return ko.utils.arrayFilter(my.data.allModels(), function (item) {
+			                var itemkey = item.makeKey.toLowerCase();
+			                return ko.utils.stringStartsWith(itemkey, filter);
+			                //return itemkey.substring(0, filter.length) === filter;
+			            });
+			        }, this),
+	            // Get the list of Cars for the sleected Model 
+			        cars = ko.computed(function () {
+			            if (!selectedModel()) {
+			                return null;
+			            }
+			            var filter = selectedModel().key.toLowerCase();
+			            return ko.utils.arrayFilter(my.data.allCars(), function (item) {
+			                var itemkey = item.modelKey().toLowerCase();
+			                return ko.utils.stringStartsWith(itemkey, filter);
+			                //return itemkey.substring(0, filter.length) === filter;
+			            });
+			        }, this);
+	            return {
+	                metadata: metadata,
+	                makes: makes,
+	                selectedMake: selectedMake,
+	                selectedModel: selectedModel,
+	                selectedCar: selectedCar,
+	                models: models,
+	                cars: cars
+	            };
+	        } ());
+
+	        // Whenever the selectedMake changes, reset the selectedModel 
+	        my.viewmodel.selectedMake.subscribe(function () {
+	            my.viewmodel.selectedModel(undefined);
+	        }, my.viewmodel);
+
+	        // Whenever the selectedModel changes, reset the selectedCar
+	        var mysub = my.viewmodel.selectedModel.subscribe(function () {
+	            my.viewmodel.selectedCar(undefined);
+	        }, my.viewmodel);
+	        //mysub.dispose();
+
+	        ko.applyBindings(my.viewmodel);
+	    });
+
+    </script>
+</head>
+
+<body>
+	<div class="page">
+        <div class="header" data-bind="with: metadata">
+            <h1 data-bind="text: pageTitle">
+            </h1>
+            <div data-bind="with:personal">
+                <a href="00-index.html">Index</a> <a data-bind="attr: {href: link, title: text}, text: text"
+                    class="personalCss"></a>
+            </div>
+        </div>
+        <div id="main">
+            <ul>
+                <li><span class="alignedCaption">Make: </span>
+                    <select data-bind="options: makes, value: selectedMake, optionsText: 'name', optionsCaption: 'Choose a make'">
+                    </select>
+                    <!-- ko with: makes() -->
+                    <span data-bind="text:length" class="textValues"></span>
+                    <!-- /ko -->
+                </li>
+                <li><span class="alignedCaption">Model: </span>
+                    <select data-bind="options: models, value: selectedModel, optionsText: 'name', optionsCaption: 'Choose a model'">
+                    </select>
+                    <!-- ko with: models() -->
+                    <span data-bind="text:length" class="textValues"></span>
+                    <!-- /ko -->
+                </li>
+                <li><span class="alignedCaption">Car: </span>
+                    <select data-bind="options: cars, value: selectedCar, optionsText: 'desc', optionsCaption: 'Choose a car'">
+                    </select>
+                    <!-- ko with: cars() -->
+                    <span data-bind="text:length" class="textValues"></span>
+                    <!-- /ko -->
+                </li>
+            </ul>
+            <div class="carResults">
+                <span class="caption">Your Selections</span>
+                <div>
+                    <span>selectedMake:</span>
+                    <!-- ko with: selectedMake-->
+                    <span data-bind="text:name" class="textValues"></span>
+                    <!-- /ko -->
+                </div>
+                <div>
+                    <span>selectedModel:</span>
+                    <!-- ko with: selectedModel-->
+                    <span data-bind="text:name" class="textValues"></span>
+                    <!-- /ko -->
+                </div>
+                <div>
+                    <span>selectedCar:</span>
+                    <!-- ko with: selectedCar-->
+                    <span data-bind="text:desc" class="textValues"></span>
+                    <!-- /ko -->
+                </div>
+            </div>
+        </div>
+        <div class="topics">
+            <span>Explores:</span>
+            <ul>
+                <li>linked lists</li>
+                <li>subscribe</li>
+                <li>ko.computed</li>
+                <li>containerless control of flow</li>
+                <li>with</li>
+                <li>built in bindings:
+                    <ul>
+                        <li>options</li>
+                        <li>optionsCaption</li>
+                        <li>optionsText</li>
+                        <li>optionsValue</li>
+                        <li>selectedOptions</li>
+                        <li>text</li>
+                        <li>value</li>
+                    </ul>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

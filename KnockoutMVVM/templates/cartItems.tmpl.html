@@ -1,0 +1,18 @@
+﻿<tr>
+    <td class="descText">
+        <span data-bind="text: product().shortDesc"></span>
+    </td>
+    <td>
+        <span data-bind="text: my.formatCurrency(product().salePrice())"></span>
+    </td>
+    <td>
+        <input data-bind="value: quantity, valueUpdate:'afterkeydown'" class="integerInput"></input>
+    </td>
+    <td>
+        <span data-bind="text: my.formatCurrency(extPrice())"></span>
+    </td>
+    <td>
+        <button data-bind="jqButton: { }, click: $root.removeFromCart">
+            Remove</button>
+    </td>
+</tr>

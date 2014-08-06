@@ -1,0 +1,27 @@
+﻿<div>
+    <div class="dialogTitleBorder">
+        <span class="borderTitleText">Product Details</span>
+        <div class="closeIcon" data-bind="click:$parent.closeDetails"></div>
+    </div>
+    <div class="photoContainer leftFloat">
+        <img data-bind="visible: photoUrl, attr: { src: photoUrl, alt: shortDesc}" class="photoThumbnail"></img>
+    </div>
+    <div>
+        <span>Brand: </span><span data-bind="text: model().brand" class="textValues"></span>
+    </div>
+    <div>
+        <span>Model: </span><span data-bind="text: model().name" class="textValues"></span>
+    </div>
+    <div>
+        <span>Price: </span><span data-bind="text: my.formatCurrency(salePrice())" class="textValues"></span>
+    </div>
+    <div>
+        <span>Rating: </span><select data-bind="options: [1,2,3,4,5], value: rating" class="ratingBox"></select>
+    </div>
+    <div>
+        <span>Description:</span></div>
+    <div>
+        <span data-bind="text: description" class="textValues"></span>
+    </div>
+    <button data-bind="jqButton: { enable: stateHasChanged()}, click: save">Save</button>
+</div>

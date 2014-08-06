@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Knockout: Loading External Templates</title>
+    <link href="../css/styles.css" rel="stylesheet" type="text/css" />
+    <script src="/scripts/jquery-1.7.1.js" type="text/javascript"></script>
+    <script src="/scripts/knockout-2.0.0.js" type="text/javascript"></script>
+    <script src="/scripts/koExternalTemplateEngine_all.js" type="text/javascript"></script>
+    <script src="/js/data.js" type="text/javascript"></script>
+    <script src="/js/utils.js" type="text/javascript"></script>
+    <script src="/js/5-09-external.js" type="text/javascript"></script>
+</head>
+<body>
+    <div class="page">
+        <!-- ko template: {name: 'header', templateUrl: '/templates/metadata'} -->
+        <!-- /ko -->
+        <div id="main">
+            <div class="leftFloat">
+                <div>
+                    <span class="caption">Select a Product</span>
+                </div>
+                <div>
+                    <input type="checkbox" data-bind="checked: showAll" /><span>All Products</span>
+                </div>
+                <ul class="smallList">
+                    <!-- ko template: {name: 'productsList', foreach:productsToShow, beforeRemove: hideElement, afterAdd: showElement} -->
+                    <!-- /ko -->
+                </ul>
+            </div>
+            <!-- ko if: selectedProduct() -->
+            <div class="leftFloat">
+                <div class="productDetailsArea">
+                    <div>
+                        <input type="checkbox" data-bind="checked: showDetails" /><span>Expand Details</span>
+                    </div>
+                    <!-- ko template: {name: productView, data: selectedProduct} -->
+                    <!-- /ko -->
+                </div>
+            </div>
+            <!--/ko-->
+        </div>
+        <!-- ko template: {name: 'topics', templateUrl: '/templates/metadata', data: metadata} -->
+        <!-- /ko -->
+    </div>
+</body>
+<script type="text/html" id="productsList">
+    <li data-bind="css: { selected: isSelected}" class="selectable">
+        <div data-bind="text: shortDesc, click:$root.selectProduct">
+        </div>
+    </li>
+</script>
+</html>

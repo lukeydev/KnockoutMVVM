@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Knockout: Object Literal</title>
+    
+    <link href="../css/styles.css" rel="stylesheet" type="text/css" />
+    <script src="/scripts/jquery-1.7.1.js" type="text/javascript"></script>
+    <script src="/scripts/knockout-2.0.0.js" type="text/javascript"></script>
+    <script src="../js/data.js" type="text/javascript"></script>
+    <script src="../js/4-02-object-literal.js" type="text/javascript"></script>
+</head>
+<body>
+    <div class="page">
+        <div class="header" data-bind="with: metadata">
+            <h1 data-bind="text: pageTitle">
+            </h1>
+            <div data-bind="with:personal">
+                <a href="00-index.html">Index</a> <a data-bind="attr: {href: link, title: text}, text: text"
+                    class="personalCss"></a>
+            </div>
+        </div>
+        <div id="main">
+            <div class="showroom">
+                <div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Ext. Price</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind='foreach: lines'>
+                            <tr>
+                                <td style="width: 25px;">
+                                    <select data-bind="options:$parent.products, value:product, optionsText: 'shortDescription', optionsCaption:'Select a product ...'">
+                                    </select>
+                                </td>
+                                <td data-bind="if: product" style="width: 100px;">
+                                    <img data-bind="attr: {src: product().photoUrl, alt:product().shortDescription, title:product().shortDescription}" 
+                                        class="photoThumbnail"/>
+                                </td>
+                                <td data-bind="if: product" style="width: 100px;">
+                                    <span data-bind='text: my.formatCurrency(product().salePrice())'></span>
+                                </td>
+                                <td style="width: 100px;">
+                                    <input data-bind='visible: product, value: quantity, valueUpdate: "afterkeydown"' class="integerInput"/>
+                                </td>
+                                <td style="width: 100px;">
+                                    <span data-bind='visible: product, text: my.formatCurrency(extendedPrice())'></span>
+                                </td>
+                                <td style="width: 100px;">
+                                    <a href='#' data-bind='click: $parent.removeLine'>Remove</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p>
+                        Total value: <span data-bind='text: my.formatCurrency(grandTotal())'></span>
+                    </p>
+                    <button data-bind='click: addLine'>Add product</button>
+                </div>
+        </div>
+    </div>
+    <div class="topics">
+        <span>Explores:</span>
+        <ul>
+            <li>namespacing</li>
+            <li>MVVM with Object Literal</li>
+            <li>separation of structure from behavior from presentation</li>
+        </ul>
+    </div>
+    </div>
+</body>
+</html>

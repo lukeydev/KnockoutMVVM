@@ -1,0 +1,155 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Knockout: Built-In Bindings</title>
+
+	
+	<link href="../css/styles.css" rel="stylesheet" type="text/css" />
+
+	<script src="/scripts/jquery-1.7.1.js" type="text/javascript"></script>
+	<script src="/scripts/knockout-2.0.0.js" type="text/javascript"></script>
+	<script src="/js/data.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+	    $(function () {
+	        my.viewmodel = {
+	            metadata: {
+	                pageTitle: "Knockout: Built-In Bindings (click and event and visible)",
+	                personal: {
+	                    link: "http://twitter.com/john_papa",
+	                    text: "@john_papa"
+	                }
+	            },
+	            // text/html
+	            id: ko.observable("123"),
+	            model: {
+	                code: ko.observable("314ce"),
+	                name: ko.observable("Taylor 314 ce")
+	            },
+
+	            // value & valueUpdate				
+	            salePrice: ko.observable(1995),
+
+	            // click and event and visible
+	            userInput: ko.observable(""),
+	            displayValue: function () {
+	                if (this.userInput().length > 0) {
+	                    window.alert("You entered: " + this.userInput());
+	                }
+	            },
+
+	            // event
+	            detailsAreVisible: ko.observable(false),
+	            showDetails: function () {
+	                this.detailsAreVisible(true);
+	            },
+	            hideDetails: function () {
+	                this.detailsAreVisible(false);
+	            }
+	            
+
+
+	        };
+	        ko.applyBindings(my.viewmodel);
+	    });
+    </script>
+</head>
+
+<body>
+	<div class="page">
+		<div class="header" data-bind="with: metadata">
+			<h1 data-bind="text: pageTitle"></h1>
+			<div data-bind="with:personal">
+				<a href="00-index.html">Index</a>
+				<a data-bind="attr: {href: link, title: text}, text: text" class="personalCss"></a>
+			</div>
+		</div>
+		<div id="main">
+			<div class="controlsPanel">
+			<table>
+				<thead>
+					<tr>
+						<td>Bindings</td>
+						<td>Target Value</td>
+						<td>Source Value(s)</td>
+					</tr>
+				</thead>
+				<!--Basics-->
+
+                <!--Text, Html-->
+
+				<tr>
+					<td>
+						<div class="caption">text</div>
+					</td>
+					<td><span data-bind="text: model.code"></span></td>
+					<td><span data-bind="text: model.code"></span></td>
+				</tr>
+
+
+
+                <!--Value, valueUpdate-->
+				<tr>
+					<td>
+						<div class="caption">value</div>
+						<div class="notes">text input</div>
+					</td>
+					<td><input type="text" data-bind="value: model.code"/></td>
+					<td><span>model.code: </span><span data-bind="text: model.code"></span></td>
+				</tr>
+
+				<!--Form and event based bindings-->
+                <!--click and event-->
+				<tr>
+					<td>
+						<div class="caption">click</div>
+					</td>
+				    <td>
+				        <input type="text" data-bind="value: userInput"/>
+                        <button data-bind="click: displayValue">display value</button>
+				    </td>
+				    <td>
+				        <span>userInput: </span><span data-bind="text: userInput"></span>
+				    </td>
+				</tr>
+				<tr>
+					<td>
+						<div class="caption">event</div>
+					</td>
+				    <td>
+				        <div data-bind="text:model.code, event: {mouseover: showDetails, mouseout: hideDetails}"></div>
+				        <div data-bind="visible:detailsAreVisible" style="background-color: yellow">
+				            <div data-bind="text:model.name"></div>
+				            <div data-bind="text:salePrice"></div>
+				        </div>
+                        
+				    </td>
+				    <td>
+				        <span>detailsAreVisible: </span><span data-bind="text: detailsAreVisible"></span>
+				    </td>
+				</tr>
+
+
+
+			</table>
+			</div>
+		</div>
+		<div class="topics">
+			<span>Explores:</span>
+			<ul>
+				<li>built in bindings:
+					<ul>
+						<li>text</li>
+						<li>value</li>
+						<li>click</li>
+						<li>event</li>
+						<li>visible</li>
+					</ul>
+				</li>
+				<li>observable</li>
+			</ul>
+		</div>
+	</div>
+</body>
+</html>
